@@ -27,9 +27,19 @@ namespace Lil.TimeTracking.Controllers
 
         // GET api/<EmployeeController>/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        [ProducesResponseType<Resources.Employee>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Get(int id)
         {
-            return "value";
+            var dbEmployee = await _context.Employees.FindAsync(id);
+
+            if (dbEmployee == null)
+            {
+                return NotFound();
+            }
+
+            var response = dbEmployee.Adapt<Resources.Employee>();
+            return Ok(response);
         }
 
         // POST api/<EmployeeController>
