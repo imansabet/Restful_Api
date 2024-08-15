@@ -12,3 +12,14 @@ Accept: application/json
 
 GET {{Lil.TimeTracking_HostAddress}}/api/Employee/1
 Accept: application/json
+
+###
+POST {{Lil.TimeTracking_HostAddress}}/api/Employee
+Content-Type: application/json
+
+{
+  "name":"Iman",
+  "startDate" :"2024-05-05"
+}
+
+###

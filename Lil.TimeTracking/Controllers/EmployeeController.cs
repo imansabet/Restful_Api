@@ -44,8 +44,29 @@ namespace Lil.TimeTracking.Controllers
 
         // POST api/<EmployeeController>
         [HttpPost]
-        public void Post([FromBody] string value)
+        [ProducesResponseType<Resources.Employee>(StatusCodes.Status201Created)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status500InternalServerError)]
+        public async Task<IActionResult> Post([FromBody] Resources.Employee value)
         {
+            if (!ModelState.IsValid)
+            {
+                return Problem("Invalid employee request", statusCode: StatusCodes.Status400BadRequest);
+            }
+            try
+            {
+                var dbEmployee = value.Adapt<Models.Employee>();
+                await _context.Employees.AddAsync(dbEmployee);
+                await _context.SaveChangesAsync();
+
+                var respone = dbEmployee.Adapt<Resources.Employee>();
+                return CreatedAtAction(nameof(Get), new { id = respone.Id }, respone);
+            }catch(Exception ex)
+            {
+                return Problem("Problem persisting employee resource", statusCode: StatusCodes.Status500InternalServerError);
+
+            }
+
         }
 
         // PUT api/<EmployeeController>/5
