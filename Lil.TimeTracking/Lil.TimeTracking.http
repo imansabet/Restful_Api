@@ -23,3 +23,12 @@ Content-Type: application/json
 }
 
 ###
+PUT {{Lil.TimeTracking_HostAddress}}/api/Employee/1
+Content-Type: application/json
+
+{
+  "Id":1,
+  "Name":"Iman its updated",
+  "StartDate" :"2024-02-05"
+}
+###
