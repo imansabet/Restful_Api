@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
 
 namespace Lil.TimeTracking.Controllers
 {
@@ -151,11 +152,30 @@ namespace Lil.TimeTracking.Controllers
 
         // DELETE api/<EmployeeController>/5
         [HttpDelete("{id}")]
-        [ProducesResponseType<ObjectResult>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<Resources.Employee>(StatusCodes.Status204NoContent)]
         [ProducesResponseType<ObjectResult>(StatusCodes.Status500InternalServerError)]
         [ProducesResponseType<ObjectResult>(StatusCodes.Status404NotFound)]
-        public void Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
+            try
+            {
+                var dbEmployee = await _context.Employees.FindAsync(id);
+                if (dbEmployee == null)
+                {
+                    return NotFound();
+                }
+                _context.Employees.Remove(dbEmployee);
+
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
+
+            catch (Exception ex)
+            {
+                return Problem("Problem deleting employee resource", statusCode: StatusCodes.Status500InternalServerError);
+
+            }
         }
     }
 }

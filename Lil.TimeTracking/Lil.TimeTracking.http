@@ -18,7 +18,7 @@ POST {{Lil.TimeTracking_HostAddress}}/api/Employee
 Content-Type: application/json
 
 {
-  "name":"Iman",
+  "name":"Iman 2",
   "startDate" :"2024-05-05"
 }
 
@@ -42,4 +42,8 @@ Content-Type: application/json
   "value":"Employee 2 patched",
   }
 ]
+###
+DELETE {{Lil.TimeTracking_HostAddress}}/api/Employee/1
+
+
 ###
