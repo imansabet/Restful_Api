@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using Microsoft.Net.Http.Headers;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Text.Encodings.Web;
 
 namespace Lil.TimeTracking.Auth;
@@ -16,7 +19,27 @@ public class APIKeyAuthHandler : AuthenticationHandler<APIKeyOptions>
     { }
     protected override Task<AuthenticateResult> HandleAuthenticateAsync()
     {
-        return Task.FromResult(AuthenticateResult.Fail("not implemented"));
+        if (!Request.Headers.ContainsKey(HeaderNames.Authorization))
+        {
+            return Task.FromResult(AuthenticateResult.NoResult());
+        }
+
+        string authHeader = Request.Headers[HeaderNames.Authorization];
+        string apiKey = authHeader.Split(' ')[1];
+
+        if (KEYS.Contains(apiKey))
+        {
+            var claims = new List<Claim>{
+            new Claim(ClaimTypes.Name, apiKey)
+           };
+            var identity = new ClaimsIdentity(claims, Scheme.Name);
+            var principal = new GenericPrincipal(identity, null);
+            var ticket = new AuthenticationTicket(principal, "APIKEY");
+
+            return Task.FromResult(AuthenticateResult.Success(ticket));
+
+        }
+        return Task.FromResult(AuthenticateResult.Fail("API Key not valid"));
     } 
 
 
