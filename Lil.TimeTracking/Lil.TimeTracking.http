@@ -1,10 +1,5 @@
 @Lil.TimeTracking_HostAddress = https://localhost:7208
 
-GET {{Lil.TimeTracking_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
-
 GET {{Lil.TimeTracking_HostAddress}}/api/Employee
 Accept: application/json
 
