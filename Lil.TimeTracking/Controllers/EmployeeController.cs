@@ -24,9 +24,44 @@ namespace Lil.TimeTracking.Controllers
         public async Task<IActionResult> Get()
         {
             var response = _context.Employees.ProjectToType<Resources.Employee>().AsEnumerable();
+            var lEmployees = new List<Resources.LinkedResource<Resources.Employee>>();
+            foreach(var e in response)
+            {
+                var lEmp = new Resources.LinkedResource<Resources.Employee>(e);
+                lEmp.Links.Add(new Resources.Resource("Projects",$"/api/Employee/{e.Id}/Projects"));
+                lEmployees.Add(lEmp);
+            }
 
-            return Ok(response);
+            return Ok(lEmployees);
         }
+
+        // GET api/<EmployeeController>/5/Projects
+        [HttpGet("{id}/Projects")]
+        [ProducesResponseType<List<Resources.Project>>(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> GetProjects(int id)  
+        {
+            var employee = await _context.Employees.FindAsync(id);
+
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            else
+            {
+                await _context.Entry(employee).Collection(e => e.Projects).LoadAsync();
+                var projects = new List<Resources.Project>();
+
+                foreach (var p in employee.Projects)
+                {
+                    var rProject = p.Adapt<Resources.Project>();
+                    projects.Add(rProject);
+                }
+
+                return Ok(projects);
+            }
+        }
+
 
         // GET api/<EmployeeController>/5
         [HttpGet("{id}")]
@@ -42,7 +77,11 @@ namespace Lil.TimeTracking.Controllers
             }
 
             var response = dbEmployee.Adapt<Resources.Employee>();
-            return Ok(response);
+            var lEmployee = new Resources.LinkedResource<Resources.Employee>(response);
+            lEmployee.Links.Add(new Resources.Resource("Projects", $"/api/Employee/{response.Id}/Projects"));
+
+
+            return Ok(lEmployee);
         }
 
         // POST api/<EmployeeController>
