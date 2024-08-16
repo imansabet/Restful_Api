@@ -1,6 +1,7 @@
 using Lil.TimeTracking.Models;
 using Mapster;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -112,8 +113,47 @@ namespace Lil.TimeTracking.Controllers
             }
         }
 
+        [HttpPatch("{id}")]
+        [ProducesResponseType<Resources.Employee>(StatusCodes.Status204NoContent)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status404NotFound)]
+        public async Task<IActionResult> Patch(int id, [FromBody] JsonPatchDocument<Resources.Employee> value)
+        {
+            try
+            {
+                var dbEmployee = await _context.Employees.FindAsync(id);
+                if(dbEmployee == null)
+                {
+                    return NotFound();
+                }
+                var employee = dbEmployee.Adapt<Resources.Employee>();
+                value.ApplyTo(employee, ModelState);
+
+                var patchedEmployee = employee.Adapt<Models.Employee>();
+
+                _context.Entry<Models.Employee>(dbEmployee).CurrentValues.SetValues(patchedEmployee);
+
+                await _context.SaveChangesAsync();
+
+                return NoContent();
+            }
+            
+            catch (Exception ex)
+            {
+                return Problem("Problem persisting employee resource", statusCode: StatusCodes.Status500InternalServerError);
+
+            }
+        }
+
+
+
+
         // DELETE api/<EmployeeController>/5
         [HttpDelete("{id}")]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType<ObjectResult>(StatusCodes.Status404NotFound)]
         public void Delete(int id)
         {
         }

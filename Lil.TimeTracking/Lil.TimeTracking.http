@@ -32,3 +32,14 @@ Content-Type: application/json
   "StartDate" :"2024-02-05"
 }
 ###
+PATCH {{Lil.TimeTracking_HostAddress}}/api/Employee/1
+Content-Type: application/json
+
+[
+  {
+  "op":"add",
+  "path":"/name",
+  "value":"Employee 2 patched",
+  }
+]
+###
