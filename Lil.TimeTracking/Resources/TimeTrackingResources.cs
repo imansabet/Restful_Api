@@ -9,3 +9,4 @@ public record TimeEntry(Guid Id , int EmployeeId,int ProjectId
 public record ProjectAssignment(int EmployeeId,int ProjectId
     ,string? EmployeeName,string? ProjectName);
 
+public record Resource(string Name,string Url);
