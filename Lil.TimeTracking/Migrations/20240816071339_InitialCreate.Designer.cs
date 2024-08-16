@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Lil.TimeTracking.Migrations
 {
     [DbContext(typeof(TimeTrackingDbContext))]
-    [Migration("20240815095335_InitialCreate")]
+    [Migration("20240816071339_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
