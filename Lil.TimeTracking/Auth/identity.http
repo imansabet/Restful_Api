@@ -1,0 +1,27 @@
+﻿@LiL.TimeTracking_HostAddress = https://localhost:7208
+
+@AccessToken=CfDJ8JZVr7aYAvdJplhmt4Hchu1U0Irs1ztEmlLcubP60euQKP3fMhyIFJzUz4MEAdE_FHzCAkrbnL9Wg2SRNDfGzEQQfqbm
+
+POST {{LiL.TimeTracking_HostAddress}}/identity/register
+Content-Type: application/json
+
+{
+    "email":"iman@sabet.com",
+    "password":"Aa123456@"
+}
+
+###
+
+POST {{LiL.TimeTracking_HostAddress}}/identity/login
+Content-Type: application/json
+
+{
+    "email":"iman@sabet.com",
+    "password":"Aa123456@"
+}
+
+###
+GET {{LiL.TimeTracking_HostAddress}}/api/Employee
+Accept:application/json
+Authorization: Bearer {{AccessToken}}
+###
