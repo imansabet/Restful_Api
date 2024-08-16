@@ -1,5 +1,6 @@
 using Lil.TimeTracking.Auth;
 using Lil.TimeTracking.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,6 +20,8 @@ builder.Services.AddDbContext<TimeTrackingDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("TrackingDbContext"))
 );
 
+builder.Services.AddIdentityApiEndpoints<IdentityUser>().AddEntityFrameworkStores<TimeTrackingDbContext>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -33,5 +36,9 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+
+//          /identity/login
+app.MapGroup("identity").MapIdentityApi<IdentityUser>();
 
 app.Run();

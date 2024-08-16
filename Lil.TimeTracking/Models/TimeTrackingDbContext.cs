@@ -1,11 +1,11 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Lil.TimeTracking.Models;
 
-public  class TimeTrackingDbContext : DbContext
+public  class TimeTrackingDbContext : IdentityDbContext<IdentityUser>
 {
-
-
     public TimeTrackingDbContext()
     {}
      public TimeTrackingDbContext(DbContextOptions options) : base(options)
